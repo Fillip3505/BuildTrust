@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BuildTrust connects construction workers with verified clients. Find honest work, hire reliable professionals. No scams, no intermediaries.">
+  <meta name="theme-color" content="#1e40af">
+  <meta property="og:title" content="BuildTrust – Honest Work and Reliable Workers">
+  <meta property="og:description" content="A transparent platform connecting reliable construction workers with verified clients, eliminating scams and intermediaries.">
+  <meta property="og:type" content="website">
+  <title>BuildTrust – Honest Work and Reliable Workers</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header__content">
+      <a href="#hero" class="header__logo" aria-label="BuildTrust hero">
+        <span class="header__logo-icon">BT</span>
+        <span class="header__logo-text">BuildTrust</span>
+      </a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <ul class="nav__list">
+          <li class="nav__list-item"><a href="#hero" class="nav__link" id="nav-hero">Home</a></li>
+          <li class="nav__list-item"><a href="#workers" class="nav__link" id="nav-workers">For Workers</a></li>
+          <li class="nav__list-item"><a href="#clients" class="nav__link" id="nav-clients">For Clients</a></li>
+          <li class="nav__list-item"><a href="#contact" class="nav__link" id="nav-contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="header__lang-switch lang-switch">
+        <button type="button" class="lang-switch__btn" onclick="switchLang('en')" aria-pressed="true">EN</button>
+        <button type="button" class="lang-switch__btn" onclick="switchLang('ru')" aria-pressed="false">RU</button>
+        <button type="button" class="lang-switch__btn" onclick="switchLang('ua')" aria-pressed="false">UA</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero" aria-labelledby="hero-title">
+      <div class="hero__content container">
+        <h1 class="hero__title" id="hero-title">BuildTrust — We don't just build houses. We build trust.</h1>
+        <p class="hero__subtitle" id="hero-subtitle">
+          A transparent platform connecting reliable construction workers with verified clients, eliminating scams and intermediaries.
+        </p>
+        <div class="hero__buttons">
+          <button type="button" class="btn btn--primary" aria-label="Scroll to workers section" onclick="document.getElementById('workers').scrollIntoView({behavior: 'smooth'})">
+            <span id="btn-worker">I'm a Worker</span>
+          </button>
+          <button type="button" class="btn btn--secondary" aria-label="Scroll to clients section" onclick="document.getElementById('clients').scrollIntoView({behavior: 'smooth'})">
+            <span id="btn-client">I'm a Client</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- For Workers Section -->
+    <section id="workers" class="workers" aria-labelledby="workers-title">
+      <div class="workers__content container">
+        <h2 class="workers__title" id="workers-title">For Workers</h2>
+        <div class="workers__text-group">
+          <p class="workers__text" id="workers-p1">Find stable construction work without scams or unreliable employers. BuildTrust connects you directly with verified clients who value professionalism and pay on time.</p>
+          <p class="workers__text" id="workers-p2">All jobs are verified before posting. You keep 100% control over your profile, rates, and schedule. No hidden fees, no middlemen taking a cut.</p>
+          <p class="workers__text" id="workers-p3">Build your reputation through honest work. Clients see your complete history and ratings. The better your reputation, the more opportunities come your way.</p>
+        </div>
+        <button type="button" class="btn btn--primary" aria-label="Join as a worker" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">
+          <span id="btn-workers-join">Join as a Worker</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- For Clients Section -->
+    <section id="clients" class="clients" aria-labelledby="clients-title">
+      <div class="clients__content container">
+        <h2 class="clients__title" id="clients-title">For Clients</h2>
+        <div class="clients__text-group">
+          <p class="clients__text" id="clients-p1">Need reliable construction workers you can trust? BuildTrust provides verified professionals with proven track records and transparent pricing.</p>
+          <p class="clients__text" id="clients-p2">Every worker is checked and rated by other clients. Browse portfolios, read reviews, and hire based on real experience, not promises.</p>
+          <p class="clients__text" id="clients-p3">Fixed pricing, agreed timelines, and guaranteed quality. If something goes wrong, we're here to help resolve it fairly. Your money is protected.</p>
+        </div>
+        <button type="button" class="btn btn--primary" aria-label="Post a job" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">
+          <span id="btn-clients-post">Post a Job</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="reviews" aria-labelledby="reviews-title">
+      <div class="reviews__content container">
+        <h2 class="reviews__title" id="reviews-title">Reviews</h2>
+        <div class="reviews__grid">
+          <article class="reviews__card">
+            <span class="reviews__stars" role="img" aria-label="5 star rating">★★★★★</span>
+            <p class="reviews__text" id="review-1-text">Coming soon. We're collecting stories from our community.</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">JD</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name" id="review-1-name">John Doe</p>
+                <p class="reviews__role" id="review-1-role">Construction Worker</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="reviews__card">
+            <span class="reviews__stars" role="img" aria-label="5 star rating">★★★★★</span>
+            <p class="reviews__text" id="review-2-text">Coming soon. Share your experience with BuildTrust.</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">SM</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name" id="review-2-name">Sarah Miller</p>
+                <p class="reviews__role" id="review-2-role">Project Manager</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="reviews__card">
+            <span class="reviews__stars" role="img" aria-label="5 star rating">★★★★★</span>
+            <p class="reviews__text" id="review-3-text">Coming soon. Join hundreds of satisfied users.</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">MT</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name" id="review-3-name">Mike Thompson</p>
+                <p class="reviews__role" id="review-3-role">Building Owner</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="reviews__card">
+            <span class="reviews__stars" role="img" aria-label="5 star rating">★★★★★</span>
+            <p class="reviews__text" id="review-4-text">Coming soon. Help us inspire others.</p>
+            <div class="reviews__author">
+              <span class="reviews__avatar">ES</span>
+              <div class="reviews__author-info">
+                <p class="reviews__name" id="review-4-name">Emily Stone</p>
+                <p class="reviews__role" id="review-4-role">Homeowner</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact" aria-labelledby="contact-title">
+      <div class="contact__content container">
+        <h2 class="contact__title" id="contact-title">Get in Touch</h2>
+        <form class="contact__form" onsubmit="handleFormSubmit(event)">
+          <div class="contact__form-group">
+            <label for="name" class="contact__label" id="label-name">Your Name</label>
+            <input type="text" id="name" name="name" class="contact__input" required>
+          </div>
+          <div class="contact__form-group">
+            <label for="email" class="contact__label" id="label-email">Email</label>
+            <input type="email" id="email" name="email" class="contact__input" required>
+          </div>
+          <div class="contact__form-group">
+            <label for="message" class="contact__label" id="label-message">Message</label>
+            <textarea id="message" name="message" class="contact__textarea" rows="6" required></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary btn--large">
+            <span id="btn-send">Send Message</span>
+          </button>
+        </form>
+        <div class="contact__success" hidden>
+          <p class="contact__success-text" id="success-msg">Thank you! We'll get back to you soon.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__content container">
+      <nav class="footer__section footer__section--links" aria-label="Footer navigation">
+        <h3 class="footer__title" id="footer-links-title">Links</h3>
+        <ul class="footer__list">
+          <li class="footer__list-item"><a href="#" class="footer__link" id="footer-privacy">Privacy Policy</a></li>
+          <li class="footer__list-item"><a href="#contact" class="footer__link" id="footer-contact-link">Contact</a></li>
+          <li class="footer__list-item"><a href="#" class="footer__link" id="footer-about">About</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer__section footer__section--brand">
+        <h3 class="footer__title">BuildTrust</h3>
+        <p class="footer__desc" id="footer-desc">Connecting workers and clients honestly.</p>
+      </div>
+
+      <nav class="footer__section footer__section--social" aria-label="Social Media">
+        <h3 class="footer__title" id="footer-social-title">Social</h3>
+        <ul class="footer__social-list">
+          <li class="footer__social-item"><a href="#" class="footer__link" id="footer-telegram">Telegram</a></li>
+          <li class="footer__social-item"><a href="#" class="footer__link" id="footer-whatsapp">WhatsApp</a></li>
+          <li class="footer__social-item"><a href="#" class="footer__link" id="footer-instagram">Instagram</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer__bottom">
+      <p>&copy; 2025 BuildTrust. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
