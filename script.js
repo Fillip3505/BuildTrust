@@ -1,3 +1,50 @@
+/**
+ * BuildTrust - Main JavaScript
+ * Enhanced with validation, error handling, lazy loading, and security
+ */
+
+// ============================================
+// CONFIGURATION & CONSTANTS
+// ============================================
+
+const CONFIG = {
+  // UI Settings
+  ui: {
+    formSuccessDisplayTime: 3000, // milliseconds
+    animationDuration: 300, // milliseconds
+    scrollBehavior: 'smooth'
+  },
+  
+  // Language Settings
+  languages: {
+    default: 'en',
+    available: ['en', 'ru', 'ua']
+  },
+  
+  // Validation Rules
+  validation: {
+    nameMinLength: 2,
+    messageMinLength: 5,
+    emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  },
+  
+  // Lazy Loading
+  lazyLoading: {
+    rootMargin: '50px', // Start loading 50px before entering viewport
+    threshold: 0.1
+  }
+};
+
+// ============================================
+// SITE CONTENT (Multilingual)
+// ============================================
+
+/**
+ * @typedef {Object} SiteContent
+ * @property {Object.<string, string>} en - English translations
+ * @property {Object.<string, string>} ru - Russian translations
+ * @property {Object.<string, string>} ua - Ukrainian translations
+ */
 const siteContent = {
   en: {
     "nav-hero": "Home",
@@ -45,7 +92,14 @@ const siteContent = {
     "footer-social-title": "Social",
     "footer-telegram": "Telegram",
     "footer-whatsapp": "WhatsApp",
-    "footer-instagram": "Instagram"
+    "footer-instagram": "Instagram",
+    // Validation messages
+    "error-name-required": "Please enter your name",
+    "error-name-min": "Name must be at least 2 characters",
+    "error-email-required": "Please enter your email",
+    "error-email-invalid": "Please enter a valid email address",
+    "error-message-required": "Please enter your message",
+    "error-message-min": "Message must be at least 5 characters"
   },
   ru: {
     "nav-hero": "Главная",
@@ -93,7 +147,14 @@ const siteContent = {
     "footer-social-title": "Социальные сети",
     "footer-telegram": "Telegram",
     "footer-whatsapp": "WhatsApp",
-    "footer-instagram": "Instagram"
+    "footer-instagram": "Instagram",
+    // Validation messages
+    "error-name-required": "Пожалуйста, введите ваше имя",
+    "error-name-min": "Имя должно содержать минимум 2 символа",
+    "error-email-required": "Пожалуйста, введите ваш email",
+    "error-email-invalid": "Пожалуйста, введите корректный email",
+    "error-message-required": "Пожалуйста, введите сообщение",
+    "error-message-min": "Сообщение должно содержать минимум 5 символов"
   },
   ua: {
     "nav-hero": "Головна",
@@ -141,64 +202,497 @@ const siteContent = {
     "footer-social-title": "Соціальні мережі",
     "footer-telegram": "Telegram",
     "footer-whatsapp": "WhatsApp",
-    "footer-instagram": "Instagram"
+    "footer-instagram": "Instagram",
+    // Validation messages
+    "error-name-required": "Будь ласка, введіть ваше ім'я",
+    "error-name-min": "Ім'я повинно містити мінімум 2 символи",
+    "error-email-required": "Будь ласка, введіть ваш email",
+    "error-email-invalid": "Будь ласка, введіть коректний email",
+    "error-message-required": "Будь ласка, введіть повідомлення",
+    "error-message-min": "Повідомлення повинно містити мінімум 5 символів"
   }
 };
 
-let currentLang = "en";
+// ============================================
+// STATE MANAGEMENT
+// ============================================
 
-function switchLang(lang) {
-  currentLang = lang;
-  const content = siteContent[lang];
-  
-  // Update all elements with id
-  for (const [key, value] of Object.entries(content)) {
-    const element = document.getElementById(key);
-    if (element) {
-      if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
-        element.placeholder = value;
-      } else {
-        element.innerText = value;
-      }
-    }
-  }
+let currentLang = CONFIG.languages.default;
 
-  // Update aria-current for language buttons
-  document.querySelectorAll('.lang-switch__btn').forEach(btn => {
-    const btnLang = btn.textContent.includes('EN') ? 'en' : 
-                    btn.textContent.includes('РУ') ? 'ru' : 'ua';
-    if (btnLang === lang) {
-      btn.setAttribute('aria-current', 'page');
-    } else {
-      btn.removeAttribute('aria-current');
-    }
-  });
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+/**
+ * Sanitize HTML to prevent XSS attacks
+ * @param {string} str - String to sanitize
+ * @returns {string} Sanitized string
+ */
+function sanitizeHTML(str) {
+  if (!str) return '';
+  const temp = document.createElement('div');
+  temp.textContent = str;
+  return temp.innerHTML;
 }
 
-function handleFormSubmit(event) {
+/**
+ * Get translation text safely with fallback
+ * @param {string} key - Translation key
+ * @param {string} lang - Language code
+ * @returns {string} Translated text or fallback
+ */
+function getTranslation(key, lang = currentLang) {
+  try {
+    if (siteContent[lang] && siteContent[lang][key]) {
+      return siteContent[lang][key];
+    }
+    // Fallback to English
+    if (siteContent[CONFIG.languages.default][key]) {
+      console.warn(`Translation missing for "${key}" in ${lang}, using English`);
+      return siteContent[CONFIG.languages.default][key];
+    }
+    console.error(`Translation missing for key: ${key}`);
+    return key;
+  } catch (error) {
+    console.error('Error getting translation:', error);
+    return key;
+  }
+}
+
+/**
+ * Smooth scroll to element
+ * @param {string} targetId - Element ID to scroll to
+ */
+function smoothScrollTo(targetId) {
+  try {
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: CONFIG.ui.scrollBehavior });
+    } else {
+      console.warn(`Element with id "${targetId}" not found`);
+    }
+  } catch (error) {
+    console.error('Error scrolling to element:', error);
+  }
+}
+
+// ============================================
+// LANGUAGE SWITCHING
+// ============================================
+
+/**
+ * Switch site language
+ * @param {string} lang - Language code (en, ru, ua)
+ */
+function switchLang(lang) {
+  try {
+    // Validate language
+    if (!CONFIG.languages.available.includes(lang)) {
+      console.error(`Invalid language: ${lang}`);
+      return;
+    }
+
+    currentLang = lang;
+    const content = siteContent[lang];
+    
+    if (!content) {
+      console.error(`No content available for language: ${lang}`);
+      return;
+    }
+
+    // Update all elements with id
+    for (const [key, value] of Object.entries(content)) {
+      const element = document.getElementById(key);
+      if (element) {
+        // Sanitize before inserting
+        const sanitizedValue = sanitizeHTML(value);
+        
+        if (element.tagName === 'TEXTAREA' || element.tagName === 'INPUT') {
+          element.placeholder = sanitizedValue;
+        } else {
+          element.textContent = value; // textContent is safe by default
+        }
+      }
+    }
+
+    // Update language buttons state
+    updateLanguageButtons(lang);
+    
+    // Store preference (optional - can be removed if not needed)
+    try {
+      localStorage.setItem('preferredLanguage', lang);
+    } catch (e) {
+      // Silent fail if localStorage is not available
+    }
+    
+  } catch (error) {
+    console.error('Error switching language:', error);
+  }
+}
+
+/**
+ * Update language buttons visual state
+ * @param {string} activeLang - Currently active language
+ */
+function updateLanguageButtons(activeLang) {
+  try {
+    const buttons = document.querySelectorAll('.lang-switch__btn');
+    buttons.forEach(btn => {
+      const btnLang = btn.getAttribute('data-lang');
+      if (btnLang === activeLang) {
+        btn.setAttribute('aria-current', 'page');
+        btn.classList.add('active');
+      } else {
+        btn.removeAttribute('aria-current');
+        btn.classList.remove('active');
+      }
+    });
+  } catch (error) {
+    console.error('Error updating language buttons:', error);
+  }
+}
+
+// ============================================
+// FORM VALIDATION
+// ============================================
+
+/**
+ * Validate email format
+ * @param {string} email - Email to validate
+ * @returns {boolean} Is valid
+ */
+function validateEmail(email) {
+  return CONFIG.validation.emailRegex.test(email);
+}
+
+/**
+ * Show error message for input field
+ * @param {HTMLElement} input - Input element
+ * @param {string} message - Error message
+ */
+function showError(input, message) {
+  try {
+    const errorElement = document.getElementById(`${input.id}-error`);
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+    input.classList.add('error');
+    input.setAttribute('aria-invalid', 'true');
+  } catch (error) {
+    console.error('Error showing validation error:', error);
+  }
+}
+
+/**
+ * Clear error message for input field
+ * @param {HTMLElement} input - Input element
+ */
+function clearError(input) {
+  try {
+    const errorElement = document.getElementById(`${input.id}-error`);
+    if (errorElement) {
+      errorElement.textContent = '';
+      errorElement.style.display = 'none';
+    }
+    input.classList.remove('error');
+    input.removeAttribute('aria-invalid');
+  } catch (error) {
+    console.error('Error clearing validation error:', error);
+  }
+}
+
+/**
+ * Validate single form field
+ * @param {HTMLElement} input - Input element to validate
+ * @returns {boolean} Is valid
+ */
+function validateField(input) {
+  const value = input.value.trim();
+  const name = input.name;
+  
+  clearError(input);
+  
+  // Name validation
+  if (name === 'name') {
+    if (!value) {
+      showError(input, getTranslation('error-name-required'));
+      return false;
+    }
+    if (value.length < CONFIG.validation.nameMinLength) {
+      showError(input, getTranslation('error-name-min'));
+      return false;
+    }
+  }
+  
+  // Email validation
+  if (name === 'email') {
+    if (!value) {
+      showError(input, getTranslation('error-email-required'));
+      return false;
+    }
+    if (!validateEmail(value)) {
+      showError(input, getTranslation('error-email-invalid'));
+      return false;
+    }
+  }
+  
+  // Message validation
+  if (name === 'message') {
+    if (!value) {
+      showError(input, getTranslation('error-message-required'));
+      return false;
+    }
+    if (value.length < CONFIG.validation.messageMinLength) {
+      showError(input, getTranslation('error-message-min'));
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+/**
+ * Validate entire form
+ * @param {HTMLFormElement} form - Form to validate
+ * @returns {boolean} Is valid
+ */
+function validateForm(form) {
+  try {
+    const inputs = form.querySelectorAll('input[required], textarea[required]');
+    let isValid = true;
+    
+    inputs.forEach(input => {
+      if (!validateField(input)) {
+        isValid = false;
+      }
+    });
+    
+    return isValid;
+  } catch (error) {
+    console.error('Error validating form:', error);
+    return false;
+  }
+}
+
+// ============================================
+// FORM SUBMISSION
+// ============================================
+
+/**
+ * Show loading state on submit button
+ * @param {HTMLButtonElement} button - Submit button
+ * @param {boolean} isLoading - Loading state
+ */
+function setButtonLoading(button, isLoading) {
+  try {
+    const textSpan = button.querySelector('#btn-send');
+    const loader = button.querySelector('.btn__loader');
+    
+    if (isLoading) {
+      button.disabled = true;
+      button.classList.add('loading');
+      if (textSpan) textSpan.style.display = 'none';
+      if (loader) loader.hidden = false;
+    } else {
+      button.disabled = false;
+      button.classList.remove('loading');
+      if (textSpan) textSpan.style.display = 'inline';
+      if (loader) loader.hidden = true;
+    }
+  } catch (error) {
+    console.error('Error setting button loading state:', error);
+  }
+}
+
+/**
+ * Handle form submission
+ * @param {Event} event - Submit event
+ */
+async function handleFormSubmit(event) {
   event.preventDefault();
   
-  const form = event.target;
-  const successDiv = form.nextElementSibling;
-  
-  // Simple validation
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const message = document.getElementById('message').value.trim();
-  
-  if (name && email && message) {
-    form.style.display = 'none';
-    successDiv.hidden = false;
+  try {
+    const form = event.target;
+    const submitButton = form.querySelector('button[type="submit"]');
+    const successDiv = document.querySelector('.contact__success');
     
-    // Reset form after 3 seconds
+    // Validate form
+    if (!validateForm(form)) {
+      return;
+    }
+    
+    // Show loading state
+    setButtonLoading(submitButton, true);
+    
+    // Get form data
+    const formData = {
+      name: sanitizeHTML(document.getElementById('name').value.trim()),
+      email: sanitizeHTML(document.getElementById('email').value.trim()),
+      message: sanitizeHTML(document.getElementById('message').value.trim())
+    };
+    
+    // TODO: Here you will add your backend API call
+    // For now, simulate API call with timeout
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    console.log('Form data (sanitized):', formData);
+    
+    // Show success message
+    form.style.display = 'none';
+    if (successDiv) {
+      successDiv.hidden = false;
+    }
+    
+    // Reset form after delay
     setTimeout(() => {
       form.reset();
       form.style.display = 'block';
-      successDiv.hidden = true;
-    }, 3000);
+      if (successDiv) {
+        successDiv.hidden = true;
+      }
+      setButtonLoading(submitButton, false);
+    }, CONFIG.ui.formSuccessDisplayTime);
+    
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    alert('An error occurred. Please try again.');
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    setButtonLoading(submitButton, false);
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  switchLang(currentLang);
-});
+// ============================================
+// LAZY LOADING
+// ============================================
+
+/**
+ * Initialize lazy loading for sections
+ */
+function initLazyLoading() {
+  try {
+    // Check if IntersectionObserver is supported
+    if (!('IntersectionObserver' in window)) {
+      console.warn('IntersectionObserver not supported, loading all content');
+      return;
+    }
+    
+    const lazySections = document.querySelectorAll('.lazy-section');
+    
+    const observerOptions = {
+      root: null,
+      rootMargin: CONFIG.lazyLoading.rootMargin,
+      threshold: CONFIG.lazyLoading.threshold
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('loaded');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+    
+    lazySections.forEach(section => {
+      observer.observe(section);
+    });
+    
+  } catch (error) {
+    console.error('Error initializing lazy loading:', error);
+  }
+}
+
+// ============================================
+// EVENT LISTENERS INITIALIZATION
+// ============================================
+
+/**
+ * Initialize all event listeners
+ */
+function initEventListeners() {
+  try {
+    // Language switch buttons
+    const langButtons = document.querySelectorAll('.lang-switch__btn');
+    langButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const lang = button.getAttribute('data-lang');
+        if (lang) {
+          switchLang(lang);
+        }
+      });
+    });
+    
+    // Scroll buttons
+    const scrollButtons = document.querySelectorAll('[data-scroll-to]');
+    scrollButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const targetId = button.getAttribute('data-scroll-to');
+        if (targetId) {
+          smoothScrollTo(targetId);
+        }
+      });
+    });
+    
+    // Contact form
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', handleFormSubmit);
+      
+      // Real-time validation on blur
+      const inputs = contactForm.querySelectorAll('input[required], textarea[required]');
+      inputs.forEach(input => {
+        input.addEventListener('blur', () => validateField(input));
+        input.addEventListener('input', () => {
+          if (input.classList.contains('error')) {
+            validateField(input);
+          }
+        });
+      });
+    }
+    
+  } catch (error) {
+    console.error('Error initializing event listeners:', error);
+  }
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+/**
+ * Initialize application
+ */
+function init() {
+  try {
+    // Load saved language preference
+    let savedLang = CONFIG.languages.default;
+    try {
+      savedLang = localStorage.getItem('preferredLanguage') || CONFIG.languages.default;
+    } catch (e) {
+      // localStorage not available
+    }
+    
+    // Switch to preferred language
+    if (CONFIG.languages.available.includes(savedLang)) {
+      switchLang(savedLang);
+    } else {
+      switchLang(CONFIG.languages.default);
+    }
+    
+    // Initialize features
+    initEventListeners();
+    initLazyLoading();
+    
+    console.log('BuildTrust initialized successfully');
+  } catch (error) {
+    console.error('Error initializing application:', error);
+  }
+}
+
+// Run initialization when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

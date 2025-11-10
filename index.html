@@ -9,8 +9,19 @@
   <meta property="og:description" content="A transparent platform connecting reliable construction workers with verified clients, eliminating scams and intermediaries.">
   <meta property="og:type" content="website">
   <title>BuildTrust – Honest Work and Reliable Workers</title>
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Optimized fonts - self-hosted (see fonts folder) -->
+  <link rel="preload" href="./fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./fonts/poppins-bold.woff2" as="font" type="font/woff2" crossorigin>
+  
+  <!-- Fallback to Google Fonts if self-hosted not available -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <!-- Header -->
@@ -31,9 +42,9 @@
       </nav>
 
       <div class="header__lang-switch lang-switch">
-        <button type="button" class="lang-switch__btn" onclick="switchLang('en')" aria-pressed="true">EN</button>
-        <button type="button" class="lang-switch__btn" onclick="switchLang('ru')" aria-pressed="false">RU</button>
-        <button type="button" class="lang-switch__btn" onclick="switchLang('ua')" aria-pressed="false">UA</button>
+        <button type="button" class="lang-switch__btn" data-lang="en" aria-label="Switch to English">EN</button>
+        <button type="button" class="lang-switch__btn" data-lang="ru" aria-label="Переключить на русский">RU</button>
+        <button type="button" class="lang-switch__btn" data-lang="ua" aria-label="Перемкнути на українську">UA</button>
       </div>
     </div>
   </header>
@@ -49,10 +60,10 @@
           A transparent platform connecting reliable construction workers with verified clients, eliminating scams and intermediaries.
         </p>
         <div class="hero__buttons">
-          <button type="button" class="btn btn--primary" aria-label="Scroll to workers section" onclick="document.getElementById('workers').scrollIntoView({behavior: 'smooth'})">
+          <button type="button" class="btn btn--primary" data-scroll-to="workers" aria-label="Scroll to workers section">
             <span id="btn-worker">I'm a Worker</span>
           </button>
-          <button type="button" class="btn btn--secondary" aria-label="Scroll to clients section" onclick="document.getElementById('clients').scrollIntoView({behavior: 'smooth'})">
+          <button type="button" class="btn btn--secondary" data-scroll-to="clients" aria-label="Scroll to clients section">
             <span id="btn-client">I'm a Client</span>
           </button>
         </div>
@@ -60,7 +71,7 @@
     </section>
 
     <!-- For Workers Section -->
-    <section id="workers" class="workers" aria-labelledby="workers-title">
+    <section id="workers" class="workers lazy-section" aria-labelledby="workers-title">
       <div class="workers__content container">
         <h2 class="workers__title" id="workers-title">For Workers</h2>
         <div class="workers__text-group">
@@ -68,14 +79,14 @@
           <p class="workers__text" id="workers-p2">All jobs are verified before posting. You keep 100% control over your profile, rates, and schedule. No hidden fees, no middlemen taking a cut.</p>
           <p class="workers__text" id="workers-p3">Build your reputation through honest work. Clients see your complete history and ratings. The better your reputation, the more opportunities come your way.</p>
         </div>
-        <button type="button" class="btn btn--primary" aria-label="Join as a worker" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">
+        <button type="button" class="btn btn--primary" data-scroll-to="contact" aria-label="Join as a worker">
           <span id="btn-workers-join">Join as a Worker</span>
         </button>
       </div>
     </section>
 
     <!-- For Clients Section -->
-    <section id="clients" class="clients" aria-labelledby="clients-title">
+    <section id="clients" class="clients lazy-section" aria-labelledby="clients-title">
       <div class="clients__content container">
         <h2 class="clients__title" id="clients-title">For Clients</h2>
         <div class="clients__text-group">
@@ -83,14 +94,14 @@
           <p class="clients__text" id="clients-p2">Every worker is checked and rated by other clients. Browse portfolios, read reviews, and hire based on real experience, not promises.</p>
           <p class="clients__text" id="clients-p3">Fixed pricing, agreed timelines, and guaranteed quality. If something goes wrong, we're here to help resolve it fairly. Your money is protected.</p>
         </div>
-        <button type="button" class="btn btn--primary" aria-label="Post a job" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">
+        <button type="button" class="btn btn--primary" data-scroll-to="contact" aria-label="Post a job">
           <span id="btn-clients-post">Post a Job</span>
         </button>
       </div>
     </section>
 
     <!-- Reviews Section -->
-    <section id="reviews" class="reviews" aria-labelledby="reviews-title">
+    <section id="reviews" class="reviews lazy-section" aria-labelledby="reviews-title">
       <div class="reviews__content container">
         <h2 class="reviews__title" id="reviews-title">Reviews</h2>
         <div class="reviews__grid">
@@ -146,24 +157,56 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact" aria-labelledby="contact-title">
+    <section id="contact" class="contact lazy-section" aria-labelledby="contact-title">
       <div class="contact__content container">
         <h2 class="contact__title" id="contact-title">Get in Touch</h2>
-        <form class="contact__form" onsubmit="handleFormSubmit(event)">
+        <form class="contact__form" id="contact-form" novalidate>
           <div class="contact__form-group">
             <label for="name" class="contact__label" id="label-name">Your Name</label>
-            <input type="text" id="name" name="name" class="contact__input" required>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              class="contact__input" 
+              required
+              minlength="2"
+              aria-required="true"
+              aria-describedby="name-error"
+            >
+            <span class="contact__error" id="name-error" role="alert"></span>
           </div>
           <div class="contact__form-group">
             <label for="email" class="contact__label" id="label-email">Email</label>
-            <input type="email" id="email" name="email" class="contact__input" required>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              class="contact__input" 
+              required
+              aria-required="true"
+              aria-describedby="email-error"
+            >
+            <span class="contact__error" id="email-error" role="alert"></span>
           </div>
           <div class="contact__form-group">
             <label for="message" class="contact__label" id="label-message">Message</label>
-            <textarea id="message" name="message" class="contact__textarea" rows="6" required></textarea>
+            <textarea 
+              id="message" 
+              name="message" 
+              class="contact__textarea" 
+              rows="6" 
+              required
+              minlength="5"
+              aria-required="true"
+              aria-describedby="message-error"
+            ></textarea>
+            <span class="contact__error" id="message-error" role="alert"></span>
           </div>
-          <button type="submit" class="btn btn--primary btn--large">
+          <button type="submit" class="btn btn--primary btn--large" id="submit-btn">
             <span id="btn-send">Send Message</span>
+            <span class="btn__loader" hidden>
+              <span class="spinner"></span>
+            </span>
           </button>
         </form>
         <div class="contact__success" hidden>
