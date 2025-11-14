@@ -5,30 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="BuildTrust connects construction workers with verified clients. Find honest work, hire reliable professionals. No scams, no intermediaries.">
   <meta name="theme-color" content="#1e40af">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://buildtrust.com">
   <meta property="og:title" content="BuildTrust – Honest Work and Reliable Workers">
   <meta property="og:description" content="A transparent platform connecting reliable construction workers with verified clients, eliminating scams and intermediaries.">
-  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://buildtrust.com/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="BuildTrust - Connecting workers and clients honestly">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://buildtrust.com">
+  <meta name="twitter:title" content="BuildTrust – Honest Work and Reliable Workers">
+  <meta name="twitter:description" content="A transparent platform connecting reliable construction workers with verified clients, eliminating scams and intermediaries.">
+  <meta name="twitter:image" content="https://buildtrust.com/images/og-image.jpg">
+  
   <title>BuildTrust – Honest Work and Reliable Workers</title>
   
-  <!-- Preconnect for performance -->
+  <!-- Preconnect for performance (Google Fonts fallback) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
-  <!-- Optimized fonts - self-hosted (see fonts folder) -->
-  <link rel="preload" href="./fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="./fonts/poppins-bold.woff2" as="font" type="font/woff2" crossorigin>
-  
-  <!-- Fallback to Google Fonts if self-hosted not available -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@700&display=swap" rel="stylesheet">
-  
   <link rel="stylesheet" href="style.css" />
+  
+  <script src="script.js" defer></script>
 </head>
 <body>
   <!-- Header -->
   <header class="header">
     <div class="header__content">
       <a href="#hero" class="header__logo" aria-label="BuildTrust hero">
-        <span class="header__logo-icon">BT</span>
+        <img 
+          src="./logo.svg" 
+          alt="BuildTrust logo" 
+          class="header__logo-img" 
+          width="120" 
+          height="auto"
+          decoding="async"
+          loading="lazy"
+        >
         <span class="header__logo-text">BuildTrust</span>
       </a>
 
@@ -171,9 +191,8 @@
               required
               minlength="2"
               aria-required="true"
-              aria-describedby="name-error"
             >
-            <span class="contact__error" id="name-error" role="alert"></span>
+            <span class="contact__error" id="name-error" role="alert" hidden></span>
           </div>
           <div class="contact__form-group">
             <label for="email" class="contact__label" id="label-email">Email</label>
@@ -184,9 +203,8 @@
               class="contact__input" 
               required
               aria-required="true"
-              aria-describedby="email-error"
             >
-            <span class="contact__error" id="email-error" role="alert"></span>
+            <span class="contact__error" id="email-error" role="alert" hidden></span>
           </div>
           <div class="contact__form-group">
             <label for="message" class="contact__label" id="label-message">Message</label>
@@ -198,13 +216,12 @@
               required
               minlength="5"
               aria-required="true"
-              aria-describedby="message-error"
             ></textarea>
-            <span class="contact__error" id="message-error" role="alert"></span>
+            <span class="contact__error" id="message-error" role="alert" hidden></span>
           </div>
           <button type="submit" class="btn btn--primary btn--large" id="submit-btn">
-            <span id="btn-send">Send Message</span>
-            <span class="btn__loader" hidden>
+            <span class="btn__text" id="btn-send">Send Message</span>
+            <span class="btn__loader">
               <span class="spinner"></span>
             </span>
           </button>
@@ -247,7 +264,5 @@
       <p>&copy; 2025 BuildTrust. All rights reserved.</p>
     </div>
   </footer>
-
-  <script src="script.js"></script>
 </body>
 </html>
